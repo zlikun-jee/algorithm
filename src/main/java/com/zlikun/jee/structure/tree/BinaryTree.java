@@ -2,6 +2,8 @@ package com.zlikun.jee.structure.tree;
 
 import lombok.Data;
 
+import java.util.Stack;
+
 /**
  * 二叉树，这里主要研究二叉树的构成及遍历方法<br>
  * https://www.jianshu.com/p/0190985635eb<br>
@@ -9,7 +11,7 @@ import lombok.Data;
  * @author zlikun <zlikun-dev@hotmail.com>
  * @date 2018/7/11 20:08
  */
-public class BinaryTree<T> {
+public class BinaryTree<T extends Comparable<T>> {
 
     /**
      * 节点类
@@ -17,7 +19,7 @@ public class BinaryTree<T> {
      * @param <T>
      */
     @Data
-    private static class TreeNode<T> {
+    private static class TreeNode<T extends Comparable<T>> {
 
         private T data;
         private TreeNode<T> left;
@@ -92,9 +94,14 @@ public class BinaryTree<T> {
         // 求二叉树的最大深度(高度)：3
         System.out.printf("\n二叉树的最大深度：%d%n", bt.maxDepth(root));
 
-        // 求二叉树中节点总数
+        // 求二叉树中节点总数：6
+        System.out.printf("\n二叉树的节点总数：%d%n", bt.count(root));
 
         // 求二叉树中叶子节点数
+        System.out.printf("\n二叉树的叶子节点总数：%d%n", bt.countLeaf(root));
+
+        // 求二叉树中最大值：9
+        System.out.printf("\n二叉树的最大值：%d%n", bt.maxValue(root));
 
         // 求二叉树中第n层(小于等于树高)节点数
 
@@ -130,6 +137,42 @@ public class BinaryTree<T> {
         // 判断二叉树是否合法的二叉搜索树(BST)
 
         System.out.println();
+    }
+
+    /** 叶子总数 */
+    private int leafs = 0;
+
+    /**
+     * 统计二叉树叶子节点总数
+     *
+     * @param node
+     * @return
+     */
+    private int countLeaf(TreeNode<T> node) {
+        if (node == null) {
+            return 0;
+        }
+        countLeaf(node.getLeft());
+        countLeaf(node.getRight());
+        if (node.getLeft() == null && node.getRight() == null) {
+            leafs ++;
+        }
+        return leafs;
+    }
+
+    /**
+     * 统计二叉树节点总数
+     *
+     * @param node
+     * @return
+     */
+    private int count(TreeNode<T> node) {
+        if (node == null) {
+            return 0;
+        }
+        int left = count(node.getLeft());
+        int right = count(node.getRight());
+        return left + right + 1;
     }
 
     /**
@@ -188,6 +231,24 @@ public class BinaryTree<T> {
         int rightDepth = maxDepth(node.getRight());
         // 取左子节点深度与右子节点深度间中的一个
         return Math.max(leftDepth, rightDepth) + 1;
+    }
+
+    /**
+     * 查找二叉树最大值，下面演示逻辑为二叉搜索树的最大值(最右节点值)<br>
+     * 怎样在变通二叉树中查找最大值呢(遍历二叉树，比较每个节点值，需要外部变量参与)
+     *
+     * @param node
+     * @return
+     */
+    private T maxValue(TreeNode<T> node) {
+
+        TreeNode<T> cursor = node;
+
+        while (cursor != null && cursor.getRight() != null) {
+            cursor = cursor.getRight();
+        }
+
+        return cursor.getData();
     }
 
 }
