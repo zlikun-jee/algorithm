@@ -85,6 +85,68 @@ public class BinarySearchTree<T extends Comparable<T>> implements Iterable<T> {
     }
 
     /**
+     * 删除指定值节点，删除节点时，存在三种情况：
+     * 1. 没有左子树(只有右子树)：
+     * 2. 没有右子树(只有左子树)：直接使指定节点的父节点指向指定节点的左子树即可
+     * 3. 左右子树都有：
+     *
+     * @param data
+     */
+    public void remove(T data) {
+        this.removeNode(this.root, data);
+    }
+
+    private Node<T> removeNode(Node<T> node, T data) {
+        if (node == null) {
+            return null;
+        }
+        if (data.compareTo(node.getData()) < 0) {
+            // 如果删除节点值小于给定节点，那么其位于给定节点的左子树上
+            node.setLeft(removeNode(node.getLeft(), data));
+            return node;
+        } else if (data.compareTo(node.getData()) > 0) {
+            // 如果删除节点值大于给定节点，那么其位于给定节点的右子树上
+            node.setRight(removeNode(node.getRight(), data));
+            return node;
+        } else {
+            // 如果删除节点的值等于给定节点，那么删除节点即为给定节点
+            if (node.getLeft() == null && node.getRight() == null) {
+                node = null;
+            } else if (node.getLeft() == null) {
+                // 只有右子树
+                node = node.getRight();
+            } else if (node.getRight() == null) {
+                // 只有左子树
+                node = node.getLeft();
+            } else {
+                // 左右子树都有，找到该节的右子树里最小节点(最左子节点)，将其值代替删除节点，将最小节点删除即可
+                Node<T> min = findMinNode(node.getRight());
+                node.setData(min.getData());
+                node.setRight(removeNode(node.getRight(), min.getData()));
+            }
+            return node;
+
+        }
+    }
+
+    /**
+     * 查找给定节点的最小子节点(最左子节点)
+     *
+     * @param node
+     * @return
+     */
+    private Node<T> findMinNode(Node<T> node) {
+        if (node == null) {
+            return null;
+        }
+        Node<T> cursor = node;
+        while (cursor.getLeft() != null) {
+            cursor = cursor.getLeft();
+        }
+        return cursor;
+    }
+
+    /**
      * @return
      * @see AbstractList#iterator()
      */
@@ -157,6 +219,15 @@ public class BinarySearchTree<T extends Comparable<T>> implements Iterable<T> {
         for (Integer x : tree) {
             System.out.println(x);
         }
+
+        System.out.println("---------------");
+
+        // 删除一个节点
+        tree.remove(3);
+        tree.remove(5);
+        tree.remove(7);
+        // 遍历二叉树
+        tree.forEach(System.out::println);
 
     }
 
