@@ -13,7 +13,7 @@ public class Bubble {
     public static void main(String[] args) {
 
         // 排序前的数组
-        int[] array = {27, 12, 36, 12, 24, 68, 59, 91, 45};
+        int[] array = {27, 12, 36, 12, 24, 45, 68, 59, 91};
 
         // 打印排序前的数组
         // [27, 12, 36, 12, 24, 68, 59, 91, 45]
